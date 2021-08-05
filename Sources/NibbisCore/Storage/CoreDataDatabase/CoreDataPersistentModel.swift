@@ -12,7 +12,7 @@ public extension PersistentModel where Self: NSManagedObject {
     
     static func create(context: PersistentContext) -> Self {
         guard let context = context as? NSManagedObjectContext else {
-            fatalError()
+            throw CoreError.incompatiblePersistentContext
         }
         
         return Self(context: context)
@@ -20,7 +20,7 @@ public extension PersistentModel where Self: NSManagedObject {
     
     static func fetch(context: PersistentContext, options: PersistentFetchOptions?) throws -> AnyCollection<Self> {
         guard let context = context as? NSManagedObjectContext else {
-            fatalError()
+            throw CoreError.incompatiblePersistentContext
         }
         
         let options = options as? CoreDataPersistentFetchOptions
@@ -41,7 +41,7 @@ public extension PersistentModel where Self: NSManagedObject {
     
     static func makeObserver(context: PersistentContext, options: PersistentFetchOptions?) -> AnyPersistentObserver<Self> {
         guard let context = context as? NSManagedObjectContext else {
-            fatalError()
+            throw CoreError.incompatiblePersistentContext
         }
         
         let options = options as? CoreDataPersistentFetchOptions
@@ -57,7 +57,7 @@ public extension PersistentModel where Self: NSManagedObject {
     
     func delete(context: PersistentContext) {
         guard let context = context as? NSManagedObjectContext else {
-            fatalError()
+            throw CoreError.incompatiblePersistentContext
         }
         
         context.delete(self)

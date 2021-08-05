@@ -80,7 +80,7 @@ extension CoreDataPersistentDatabase: PersistentDatabase {
     
     public func save(context: PersistentContext) throws {
         guard let context = context as? NSManagedObjectContext else {
-            fatalError()
+            throw CoreError.incompatiblePersistentContext
         }
         if context.hasChanges {
             try context.save()
@@ -93,7 +93,7 @@ extension CoreDataPersistentDatabase: PersistentDatabase {
     
     public func deleteAll<T: PersistentModel>(model: T.Type, context: PersistentContext) throws {
         guard let context = context as? NSManagedObjectContext else {
-            fatalError()
+            throw CoreError.incompatiblePersistentContext
         }
         
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: String(describing: T.self))

@@ -11,6 +11,7 @@ public extension LocalStorage {
     
     static func memory() -> Self {
         
+        let queue = DispatchQueue(label: "MemoryLocalStorageQueue", attributes: .concurrent)
         var observe: ((_ oldValue: [String: AnyHashable], _ newValue: [String: AnyHashable]) -> Void)?
         
         var memory = [String: AnyHashable]() {
@@ -21,10 +22,14 @@ public extension LocalStorage {
         
         return Self(
             save: { key, value in
-                memory[key] = value
+                queue.async(flags: .barrier) {
+                    memory[key] = value
+                }
             },
             get: { key in
-                memory[key]
+                queue.sync {
+                    memory[key]
+                }
             },
             observe: { key in
                 AsyncStream<AnyHashable?> { continuation in
@@ -38,10 +43,14 @@ public extension LocalStorage {
                 }
             },
             remove: { key in
-                memory.removeValue(forKey: key)
+                queue.async(flags: .barrier) {
+                    memory.removeValue(forKey: key)
+                }
             },
             removeAll: {
-                memory.removeAll()
+                queue.async(flags: .barrier) {
+                    memory.removeAll()
+                }
             }
         )
     }
